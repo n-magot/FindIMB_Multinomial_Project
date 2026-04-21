@@ -1,0 +1,10 @@
+# virtual environment
+.FindIMB_venv/
+FindIMB_venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE
+.idea/

@@ -8,6 +8,15 @@ Steps:
 4. Perform cross-validation
 5. Compute metrics (DEU, AUC, ECE, LogLoss)
 6. Save results
+
+In this document Eq.7b new updated and FindIMB implemented:
+    For 𝐔* = MB(Y), 𝐕 ′ = 𝐕 ⋃ 𝑋, 𝐙 ⊆ 𝐔* and hen the full set is assumed as MB(Y), then 𝐕 ′ = 𝐔*
+    and the 2nd term of Eq.7b_new is equal to 1. So we have:
+
+        (a) 𝑃(𝐷𝑜|𝐻𝐙𝑐) = 𝑃(𝐷𝑜|𝐻_𝐔*) for 𝐙 = 𝐔*; otherwise 0.
+        (b) 𝑃(𝐷𝑜|𝐻𝐙c̅) = 𝑃(𝐷𝑜|𝐻_𝐔*) *1* (1/ ( |𝐕 ′|-|𝐙| + 1)) for 𝐙 ⊆ 𝐔*; otherwise 0.
+
+@author: LELOVA
 """
 
 import pandas as pd
@@ -29,7 +38,7 @@ from src.bma import bma_predict_and_evaluate
 # ======================================================
 TREATMENT = "treatment"
 OUTCOME = "outcome"
-N_SPLITS = 2
+N_SPLITS = 20
 THRESHOLD = 0.1
 SEED = 42
 

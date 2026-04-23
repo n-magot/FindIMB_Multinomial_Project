@@ -6,71 +6,60 @@ def create_synthetic_data(n_obs=5000, n_exp=100, seed=42):
     np.random.seed(seed)
 
     # ======================================================
-    # 1. DISCRETIZE covariates from the start
+    # 1. Covariates
     # ======================================================
 
-    # OBSERVATIONAL
-    age_obs = np.random.choice(["young", "middle", "old"], n_obs, p=[0.5, 0.3, 0.2])
-    sex_obs = np.random.choice([0, 1], n_obs, p=[0.8, 0.2])
+    # Confounder: affects both treatment and outcome
+    age_obs = np.random.binomial(1, 0.5, n_obs)   # 0=young, 1=old
+    age_exp = np.random.binomial(1, 0.5, n_exp)
 
-    # EXPERIMENTAL
-    age_exp = np.random.choice(["young", "middle", "old"], n_exp, p=[0.5, 0.3, 0.2])
-    sex_exp = np.random.choice([0, 1], n_exp, p=[0.8, 0.2])
-
-    # ======================================================
-    # 2. Observational treatment (biased)
-    # ======================================================
-
-    age_score = np.array([0, 1, 2])  # young < middle < old
-    age_map = {"young": 0, "middle": 1, "old": 2}
-
-    logits_obs = (
-        0.6 * np.vectorize(age_map.get)(age_obs)
-        + 0.3 * sex_obs
-    )
-
-    p_t_obs = 1 / (1 + np.exp(-logits_obs))
-    T_obs = np.random.binomial(1, p_t_obs)
+    # Non-confounder: affects outcome but NOT treatment
+    noise_obs = np.random.binomial(1, 0.5, n_obs)
+    noise_exp = np.random.binomial(1, 0.5, n_exp)
 
     # ======================================================
-    # 3. Outcome model (discrete inputs)
+    # 2. Observational treatment (biased by confounder only)
     # ======================================================
 
-    def outcome_model(age_cat, sex, T):
-        age_val = np.vectorize(age_map.get)(age_cat)
+    logits_obs = 0.6 * age_obs   # noise_var intentionally excluded
+    p_t_obs    = 1 / (1 + np.exp(-logits_obs))
+    T_obs      = np.random.binomial(1, p_t_obs)
 
+    # ======================================================
+    # 3. Outcome model (confounder + non-confounder + treatment)
+    # ======================================================
+
+    def outcome_model(age, noise_var, T):
         logit = (
-            -2
-            + 0.7 * age_val
-            + 0.5 * sex
-            - 1.2 * T
+            -1.0
+            + 0.7 * age        # confounder affects outcome
+            + 0.6 * noise_var  # non-confounder affects outcome
+            - 1.2 * T          # treatment effect
         )
-
         p = 1 / (1 + np.exp(-logit))
         return np.random.binomial(1, p)
 
-    Y_obs = outcome_model(age_obs, sex_obs, T_obs)
+    Y_obs = outcome_model(age_obs, noise_obs, T_obs)
 
     Do = pd.DataFrame({
-        "age": age_obs,
-        "sex": sex_obs,
+        "age":       age_obs,
+        "noise_var": noise_obs,
         "treatment": T_obs,
-        "outcome": Y_obs
+        "outcome":   Y_obs
     })
 
     # ======================================================
-    # 4. Experimental dataset (independent + randomized)
+    # 4. Experimental dataset (randomized treatment)
     # ======================================================
 
     T_exp = np.random.binomial(1, 0.5, n_exp)
-
-    Y_exp = outcome_model(age_exp, sex_exp, T_exp)
+    Y_exp = outcome_model(age_exp, noise_exp, T_exp)
 
     De = pd.DataFrame({
-        "age": age_exp,
-        "sex": sex_exp,
+        "age":       age_exp,
+        "noise_var": noise_exp,
         "treatment": T_exp,
-        "outcome": Y_exp
+        "outcome":   Y_exp
     })
 
     return Do, De

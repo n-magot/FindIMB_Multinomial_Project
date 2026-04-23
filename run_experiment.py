@@ -38,7 +38,7 @@ from src.bma import bma_predict_and_evaluate
 # ======================================================
 TREATMENT = "treatment"
 OUTCOME = "outcome"
-N_SPLITS = 20
+N_SPLITS = 2
 THRESHOLD = 0.1
 SEED = 42
 
@@ -94,7 +94,7 @@ def run_experiment(Do, De_all):
         # -----------------------------------
         # 3b. FindIMB
         # -----------------------------------
-        df_scores = greedy_search_FindIMB_forward(
+        df_scores, T = greedy_search_FindIMB_forward(
             Do, De, TREATMENT, covariates, OUTCOME, threshold=THRESHOLD
         )
         print(df_scores)

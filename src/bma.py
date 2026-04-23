@@ -111,6 +111,12 @@ def bma_predict_and_evaluate(Do, De, De_test, df_scores, treatment, outcome, df_
 
         return P_Y
 
+    # print('df_scores', df_scores)
+    # print('df_Score_De', df_Score_De)
+    # print('df_Score_Do', df_Score_Do)
+    # print('df_Score_Do_De', df_Score_Do_De)
+
+
     P_Y_Do = bma_predict_single_source(Do, De_test, df_Score_Do, outcome)
     P_Y_De = bma_predict_single_source(De, De_test, df_Score_De, outcome)
     P_Y_all = bma_predict_single_source(Do_De, De_test, df_Score_Do_De, outcome)

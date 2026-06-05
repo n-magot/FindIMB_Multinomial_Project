@@ -121,8 +121,8 @@ def bma_predict_and_evaluate(Do, De, De_test, df_scores, treatment, outcome, df_
     P_Y_De = bma_predict_single_source(De, De_test, df_Score_De, outcome)
     P_Y_all = bma_predict_single_source(Do_De, De_test, df_Score_Do_De, outcome)
 
-    P_Y_exp = np.asarray(P_Y_Do)
-    P_Y_obs = np.asarray(P_Y_De)
+    P_Y_exp = np.asarray(P_Y_De)
+    P_Y_obs = np.asarray(P_Y_Do)
     P_Y_all = np.asarray(P_Y_all)
 
     # Evaluate expected outcomes using the new function

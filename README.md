@@ -43,15 +43,6 @@ python run_experiment.py
 
 This generates a synthetic example (`src/preprocessing.py`), runs 2-fold cross-validation over $D_e$, and prints per-fold metrics. On the default synthetic data (5,000 observational and 100 experimental samples, two binary covariates) it takes about two minutes.
 
-Synthetic data-generating process:
-
-| Variable    | Role                                                                    |
-|-------------|-------------------------------------------------------------------------|
-| `age`       | Confounder: affects treatment assignment in $D_o$ and the outcome       |
-| `noise_var` | Affects the outcome only                                                |
-| `treatment` | $X$: depends on `age` in $D_o$, randomized ($p=0.5$) in $D_e$           |
-| `outcome`   | $Y$: `logit P(Y=1) = -1 + 0.7·age + 0.6·noise_var - 1.2·treatment`      |
-
 ## Using your own data
 
 Replace `create_synthetic_data()` in `run_experiment.py` with two `pandas.DataFrame`s, `Do` and `De`, that have the same columns:
